@@ -6,8 +6,16 @@
             </div> 
             <app-carousel></app-carousel>
 
-            <p>Need help with your <span class="testimonials__content--flickerChange">
-                {{ flickerChange }}</span> </p>
+            <p>Need help with your 
+              <span class="testimonials__content--flickerChange">
+                <transition name="flicker">
+                  <span>
+                   {{ flickerChange }} 
+                  </span>
+                
+                </transition>
+                </span> 
+                </p>
             <button>get a free quote</button>
         </div>
     </section>
@@ -80,6 +88,7 @@ export default {
                     font-size: 2rem
             &--flickerChange
                 text-decoration: underline
+                transition: 2s
             p
                 margin-top: 20px
                 padding: 20px 0

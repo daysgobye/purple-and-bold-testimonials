@@ -77,6 +77,7 @@ export default {
       playbtn: this.$refs.playbtn
     };
   },
+  //this created hook checks what screen size you are on and changes how many slides will be shown in the view port
   created() {
     if (window.matchMedia("(max-width: 650px)").matches) {
       this.slidesInView = 1;
@@ -85,6 +86,7 @@ export default {
     }
   },
   methods: {
+    // this clickes on the play btn given to us by vts when you click on the pause btn
     pausebtn() {
       this.$refs.playbtn.click();
     }
@@ -97,7 +99,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-   
     @import '../../normalize.scss'
     @import '../../base.sass'
     @import './tnsCss.sass'
@@ -114,7 +115,6 @@ export default {
                 width: 100% 
             @include tablet-portrait
                 width: 80%
-            .tns-slide-active
     .slide__card
         border-left: 1px solid black
         width: 250px
@@ -128,18 +128,10 @@ export default {
         .slide__card--person
             width: 100%
             display: flex
-           
             flex-direction: column
             padding: 15px
             .Slide__card--title
                 color: #ccc
-            
-        .tns-fadeIn
-            transition: 4s
-        .tns-normal
-            transition: 4s
-        .tns-fadeOut
-            transition: 4s
     .controls
         display: flex
         flex-direction: column
@@ -159,8 +151,4 @@ export default {
             width: 100px
             height: 100px
             background: red
-    #tns1
-        // transition-duration: 2s 
-    .zoomin
-        background: red
 </style>
