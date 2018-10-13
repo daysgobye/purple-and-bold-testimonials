@@ -1,7 +1,7 @@
 <template>
     <div class="wraper">
         <div class="image__box">
-           <tiny-slider class="slide" ref="slider"  :mouse-drag="true" :autoplay="true" :autoplay-hover-pause="true" :speed="2000" :controls="false" :autoplayButton="'.playbtn'" :useLocalStorage="false" :autoplayText="['play', 'play']" :animateIn="zoomin" :loop="true" :autoplayTimeout="2400" :items="3" :responsive="responsive" :gutter="50">
+           <tiny-slider class="slide" ref="slider"  :mouse-drag="true" :autoplay="true" :autoplay-hover-pause="true" :speed="2000" :controls="false" :autoplayButton="'.playbtn'" :useLocalStorage="false" :autoplayText="['play', 'play']" :animateIn="zoomin" :loop="true" :autoplayTimeout="2400" :items="slidesInView" :responsive="responsive" :gutter="50">
           <div v-for="slide in testimonials" v-bind:key="slide.id">
               
                     <div class="slide__card">
@@ -73,22 +73,16 @@ export default {
             " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed  culpa qui officia deserunt mollit anim id est laborum."
         }
       ],
-      responsive: {
-        640: {
-          edgePadding: 20,
-          gutter: 0,
-          items: 1
-        },
-        700: {
-          gutter: 30,
-          items: 2
-        },
-        900: {
-          items: 3
-        }
-      },
+      slidesInView: 3,
       playbtn: this.$refs.playbtn
     };
+  },
+  created() {
+    if (window.matchMedia("(max-width: 650px)").matches) {
+      this.slidesInView = 1;
+    } else if (window.matchMedia("(max-width: 768px)").matches) {
+      this.slidesInView = 2;
+    }
   },
   methods: {
     pausebtn() {
@@ -111,11 +105,15 @@ export default {
         display: flex
         height: 300px
         justify-content: space-between
+        @include tablet-portrait
+            justify-content: flex-start
         .image__box
             width: 73%
             overflow: hidden
-            @include phone-large 
+            @include edgesnap 
                 width: 100% 
+            @include tablet-portrait
+                width: 80%
             .tns-slide-active
     .slide__card
         border-left: 1px solid black
@@ -155,6 +153,8 @@ export default {
         transform: translateY(-14%)
         @include tablet-phone 
             display: none
+        @include tablet-portrait
+            width: 20%
         button
             width: 100px
             height: 100px

@@ -70,8 +70,9 @@ export default {
             flex-direction: column
             width: 1100px
             padding-bottom: 20px
-            @include phone-large 
-              width: 100% 
+            @include edgesnap
+                width: 100%
+            
             &--title
                 padding-top: 20px
                 padding-bottom: 33px
@@ -88,6 +89,9 @@ export default {
                 width: 20%
                 border: solid 2px gray
                 border-radius: 3px
+                @include tablet-portrait
+                  width: 40%
+                  
 </style>
 
 
