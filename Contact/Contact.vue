@@ -8,19 +8,19 @@
             <div class="flex__col contact__body__left">
                 <div class="flex__col transback contact__body__left--name">
                     <label for="name">Name</label>
-                    <input type="text" v-model="name" name="name">
+                    <input type="text" v-model="messageData.yourName" name="name">
                 </div>
                 <div class="flex__col transback contact__body__left--company">
                     <label for="company">Company</label>
-                    <input type="text" v-model="company" name="company">
+                    <input type="text" v-model="messageData.company" name="company">
                 </div>
                 <div class="flex__col transback contact__body__left--telephone">
                     <label for="Telephone">Telephone</label>
-                    <input type="text" v-model="telephone" name="Telephone">
+                    <input type="text" v-model="messageData.telephone" name="Telephone">
                 </div>
                 <div class="flex__col transback contact__body__left--email">
                     <label for="email">Email</label>
-                    <input type="text" v-model="email" name="email">
+                    <input type="text" v-model="messageData.email" name="email">
                 </div>
                 <div class="flex__col transback contact__body__left--details">
                     <label> Project Details</label>
@@ -31,31 +31,36 @@
                         <input type="text" v-model="customTag"> 
                         <button @click="addCustomTag">+</button>
                     </div>
+                    <h4>Budget</h4>
+                    <div>
+                       <p>${{ messageData.price[0] }}  - ${{ messageData.price[1] }} </p> 
+                    </div>
                     
+                    <vue-slider ref="slider" v-bind="vueSliderOptions"  v-model="messageData.price"></vue-slider>
                 </div>
             </div>
             <div class="flex__col contact__body__right">
                 <div class="flex__col contact__body__right--compose">
-                    <p>Hello. My name is <span class="contact__body__right--ul">{{ name }}</span>  and I need: </p>
+                    <p>Hello. My name is <span class="contact__body__right--ul">{{ messageData.yourName }}</span>  from <span class="contact__body__right--ul">{{ messageData.company }}</span> and I need: </p>
                     <div class="tag">
-                    <div class="tag__bubbles" v-for="(tag, index) in pickedTags" :key="index" @click="removeTag(index)">
-                            <p>{{ tag }}  <span class="tag__bubbles--del">x</span></p>
+                    <div class="tag__bubbles" v-for="(tag, index) in messageData.pickedTags" :key="index" @click="removeTag(index)">
+                            <p>{{ tag }}  <button class="tag__bubbles--del">x</button></p>
                         </div>
                     </div>
-                    <p> You can reach me at my email <span class="contact__body__right--ul">{{ email }}</span> or <br> by phone at <span class="contact__body__right--ul"> {{telephone}} </span></p>
-                    <p>I am looking to spend between <span class="contact__body__right--ul"> {{pricelow}} </span> and <span class="contact__body__right--ul"> {{pricehigh}} </span> .</p>
+                    <p class="pb"> You can reach me at my email <span class="contact__body__right--ul">{{ messageData.email }}</span> or <br> by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span></p>
+                    <p class="pb">I am looking to spend between <span class="contact__body__right--ul"> {{messageData.price[0]}} </span> and <span class="contact__body__right--ul"> {{messageData.price[1]}} </span> .</p>
                 </div>
                 <div class="flex__col transback contact__body__right--missed">
                     <label for="missed">Did We Miss Anything?</label>
-                    <textarea name="missed" v-model="missed" id="" cols="30" rows="10"></textarea>
+                    <textarea name="missed" v-model="messageData.missed" id="" cols="30" rows="10"></textarea>
                 </div>
             </div>
         </div> 
         <div class="contact__send">
         <form action="https://formspree.io/l33t.ppl@gmail.com"
             method="POST">
-            <textarea name="message" id="contact__send--message" ref="realmessage" cols="30" rows="10"></textarea>
-            <input type="submit" value="Send">
+            <textarea name="message" id="contact__send--message" ref="realmessage" cols="3" rows="1"></textarea>
+            <input type="submit" value="Send Message">
         </form>
     </div>
     </div>
@@ -65,41 +70,97 @@
 </section>
 </template>
 <script>
+import vueSlider from "vue-slider-component";
 export default {
   data() {
     return {
-      name: "",
-      company: "",
-      telephone: "",
-      email: "",
-      missed: "",
-      pricelow: 900,
-      pricehigh: 10000,
+      messageData: {
+        yourName: "",
+        company: "",
+        telephone: "",
+        email: "",
+        missed: "",
+        price: [1500, 4000],
+        pickedTags: []
+      },
+      vueSliderOptions: {
+        min: 900,
+        max: 10000,
+        tooltip: false,
+        sliderStyle: [
+          {
+            background: "#f7f3f3"
+          }
+        ],
+        bgStyle: {
+          backgroundColor: "#f7f3f3"
+        },
+        processStyle: {
+          background: "#f7f3f3"
+        }
+      },
+
       tags: ["Website", "Branding", "Marketing"],
-      pickedTags: [],
+
       customTag: "Enter your own"
     };
   },
   methods: {
+    // this is called when you click on one of the given tags and moves it into the message
     addTag(i) {
-      this.pickedTags.push(this.tags[i]);
+      this.messageData.pickedTags.push(this.tags[i]);
     },
+    // this is called when you enter a custom tag and it will add it to the message
     addCustomTag() {
-      this.pickedTags.push(this.customTag);
+      this.messageData.pickedTags.push(this.customTag);
     },
     removeTag(i) {
-      this.pickedTags.splice(i, 1);
-    }
-  },
-  watch: {
-    name: function() {
-      const message = `hello. my name is ${this.name} and I need: ${
-        this.pickedTags
-      } you can reach me ato my email ${this.email} or by phone at ${
-        this.telephone
-      } I am looking to spend between ${this.pricelow} and ${this.pricehigh}  `;
+      this.messageData.pickedTags.splice(i, 1);
+    },
+    // this is called from the watchers and all it does if take in all of the input fields and put them into the hidden text feild that is sent out
+    pushMessage() {
+      const message = `hello. my name is ${this.messageData.yourName} from ${
+        this.messageData.company
+      } and I need: ${
+        this.messageData.pickedTags
+      } you can reach me at my email ${this.messageData.email} or by phone at ${
+        this.messageData.telephone
+      } I am looking to spend between ${this.messageData.price[0]} and ${
+        this.messageData.price[1]
+      } here are some extra details ${this.messageData.missed}`;
       this.$refs.realmessage.value = message;
     }
+  },
+
+  watch: {
+    //these watchers watch for a changes on the input fields and call the funcion to push it to the real text field
+    "messageData.yourName": function() {
+      this.pushMessage();
+    },
+    "messageData.company": function() {
+      this.pushMessage();
+    },
+    "messageData.telephone": function() {
+      this.pushMessage();
+    },
+    "messageData.email": function() {
+      this.pushMessage();
+    },
+    "messageData.missed": function() {
+      this.pushMessage();
+    },
+    "messageData.pricelow": function() {
+      this.pushMessage();
+    },
+    "messageData.pricehigh": function() {
+      this.pushMessage();
+    },
+    "messageData.pickedTags": function() {
+      this.pushMessage();
+    }
+  },
+  components: {
+    vueSlider
   }
 };
 </script>
@@ -109,11 +170,13 @@ export default {
     $gradient: linear-gradient(to right bottom, #eaa26e, #ff9e89, #ff9eab, #ffa4d1, #fab1f5);
     $inputback: #f7f3f3
     $cardback: rgba(255, 255, 255, .4)
+    $inputColor: black
+    $maintextcolor: white
 
     section
         width: 100vw
         height: 100vh
-        color: white
+        color: $maintextcolor
         background-image: $gradient
         display: flex
         justify-content: center
@@ -122,54 +185,101 @@ export default {
             width: 1100px
             @include edgesnap
                 width: 100%
+            h2
+                padding-bottom: 50px
+                font-size: 2em
+            input:focus 
+                outline: none
+                box-shadow: 0px 0px 7px 1px rgba(250,177,245,1);//rgba(234,162,110,1);
             &__body
                 display: flex
                 justify-content: center
-                justify-content: space-around
+                justify-content: space-between
+                @include tablet-phone
+                    flex-direction: column
                 &__left
-                    width: 47%
-                    &--details
-                
+                    width: 48%
+                    .contact__body__left--details
+                        input
+                            color: $maintextcolor
+                        button
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                            border: 1px solid $maintextcolor
+                            border-radius: 100%
+                            height: 1.5em
+                            width: 1.5em
+                            transform: translateY(25%)
+                        h4
+                            margin-bottom: 20px
+                        p
+                            text-align: center
                 &__right
-                    width: 47%
+                    width: 48%
                     textarea
                         border: none
                         background: $inputback
                         margin-top: 20px 
+                        color: $inputColor
+                        resize: none
+                        &:focus 
+                            outline: none
+                            box-shadow: 0px 0px 7px 1px rgba(250,177,245,1);//rgba(234,162,110,1);
+                    .tag
+                        min-height: 62px
+                        flex-wrap: wrap
+                        &__bubbles
+                            height: 75%
                 .flex__col
                     display: flex
                     flex-direction: column
+                .pb
+                    padding-bottom: 64px
                 .transback
                     background: $cardback
                     padding: 10px
                     margin-bottom: 20px
                     border-radius: 5px
                 input
-                    color: black
+                    color: $inputColor
                     border: none
                     background: $inputback
-                .contact__body__right--ul
-                    border-bottom: 1px solid white
-                    min-width: 100px
+                    font-size: 1.1rem
+                    padding: 6px
+                .contact__body__right--compose
+                    font-size: 1.2rem
+                    .contact__body__right--ul
+                        border-bottom: 2px solid white
+                        display: inline-block
+                        min-width: 70px
             .tag
                 display: flex
+                flex-wrap: wrap
                 input
                     background: none
-                    border-bottom: 1px solid white
+                    border-bottom: 2px solid white
                 &__bubbles
                     background: $cardback
                     border-radius: 15px
                     padding: 5px
                     margin: 5px
                     &--del
-                        width: 1em
-                        height: 1em
+                        height: 1.5em
+                        width: 1.5em
+                     
                         border: 1px solid white
                         border-radius: 100%
             &__send
                 display: flex
                 justify-content: flex-end
                 align-self: flex-end
+                input
+                    margin-top: 20px
+                    font-size: 1.4em
+                    border-radius: 15px
+                    padding: .5em 1em
+                    border: 2px solid $maintextcolor
                 #contact__send--message
                     visibility: hidden
 </style>
