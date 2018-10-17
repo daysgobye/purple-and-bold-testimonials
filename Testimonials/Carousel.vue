@@ -1,7 +1,7 @@
 <template>
     <div class="wraper">
         <div class="image__box">
-           <tiny-slider class="slide" ref="slider"  :mouse-drag="true" :autoplay="true" :autoplay-hover-pause="true" :speed="2000" :controls="false" :autoplayButton="'.playbtn'" :useLocalStorage="false" :autoplayText="['play', 'play']" :animateIn="zoomin" :loop="true" :autoplayTimeout="2400" :items="slidesInView" :responsive="responsive" :gutter="50">
+           <tiny-slider class="slide" ref="slider"  :mouse-drag="true" :autoplay="true" :autoplay-hover-pause="true" :speed="2000" :controls="false" :autoplayButton="'.playbtn'" :useLocalStorage="false" :autoplayText="['play', 'play']" :animateIn="'zoomin'" :loop="true" :autoplayTimeout="2400" :items="slidesInView"  :gutter="50">
           <div v-for="slide in testimonials" v-bind:key="slide.id">
               
                     <div class="slide__card">

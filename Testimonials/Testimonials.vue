@@ -80,6 +80,8 @@ export default {
             padding-bottom: 20px
             @include edgesnap
                 width: 100%
+                padding: 30px
+              
             
             &--title
                 padding-top: 20px

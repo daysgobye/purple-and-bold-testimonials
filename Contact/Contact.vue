@@ -7,7 +7,7 @@
         <div class="contact__body">
             <div class="flex__col contact__body__left">
                 <div class="flex__col transback contact__body__left--name">
-                    <label for="name">Name</label>
+                    <label for="name">Name *</label>
                     <input type="text" v-model="messageData.yourName" name="name">
                 </div>
                 <div class="flex__col transback contact__body__left--company">
@@ -15,11 +15,11 @@
                     <input type="text" v-model="messageData.company" name="company">
                 </div>
                 <div class="flex__col transback contact__body__left--telephone">
-                    <label for="Telephone">Telephone</label>
+                    <label for="Telephone">Telephone *</label>
                     <input type="text" v-model="messageData.telephone" name="Telephone">
                 </div>
                 <div class="flex__col transback contact__body__left--email">
-                    <label for="email">Email</label>
+                    <label for="email">Email *</label>
                     <input type="text" v-model="messageData.email" name="email">
                 </div>
                 <div class="flex__col transback contact__body__left--details">
@@ -43,11 +43,13 @@
                 <div class="flex__col contact__body__right--compose">
                     <p>Hello. My name is <span class="contact__body__right--ul">{{ messageData.yourName }}</span>  from <span class="contact__body__right--ul">{{ messageData.company }}</span> and I need: </p>
                     <div class="tag">
-                    <div class="tag__bubbles" v-for="(tag, index) in messageData.pickedTags" :key="index" @click="removeTag(index)">
+                        <transition-group name="tag-in">
+                        <div class="tag__bubbles" v-for="(tag, index) in messageData.pickedTags" :key="index" @click="removeTag(index)">
                             <p>{{ tag }}  <button class="tag__bubbles--del">x</button></p>
                         </div>
+                        </transition-group>
                     </div>
-                    <p class="pb"> You can reach me at my email <span class="contact__body__right--ul">{{ messageData.email }}</span> or <br> by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span></p>
+                    <p class="pb"> You can reach me by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span> or <br> at my email <span class="contact__body__right--ul">{{ messageData.email }}</span></p>
                     <p class="pb">I am looking to spend between <span class="contact__body__right--ul"> {{messageData.price[0]}} </span> and <span class="contact__body__right--ul"> {{messageData.price[1]}} </span> .</p>
                 </div>
                 <div class="flex__col transback contact__body__right--missed">
@@ -57,10 +59,11 @@
             </div>
         </div> 
         <div class="contact__send">
+            
         <form action="https://formspree.io/l33t.ppl@gmail.com"
             method="POST">
             <textarea name="message" id="contact__send--message" ref="realmessage" cols="3" rows="1"></textarea>
-            <input type="submit" value="Send Message">
+            <input type="submit" ref="submit" value="Send Message">
         </form>
     </div>
     </div>
@@ -105,6 +108,9 @@ export default {
       customTag: "Enter your own"
     };
   },
+  mounted() {
+    this.blocksubmit();
+  },
   methods: {
     // this is called when you click on one of the given tags and moves it into the message
     addTag(i) {
@@ -129,6 +135,18 @@ export default {
         this.messageData.price[1]
       } here are some extra details ${this.messageData.missed}`;
       this.$refs.realmessage.value = message;
+      this.blocksubmit();
+    },
+    blocksubmit() {
+      if (
+        !this.messageData.yourName ||
+        !this.messageData.telephone ||
+        !this.messageData.email
+      ) {
+        this.$refs.submit.disabled = true;
+      } else {
+        this.$refs.submit.disabled = false;
+      }
     }
   },
 
@@ -149,10 +167,7 @@ export default {
     "messageData.missed": function() {
       this.pushMessage();
     },
-    "messageData.pricelow": function() {
-      this.pushMessage();
-    },
-    "messageData.pricehigh": function() {
+    "messageData.price": function() {
       this.pushMessage();
     },
     "messageData.pickedTags": function() {
@@ -172,6 +187,7 @@ export default {
     $cardback: rgba(255, 255, 255, .4)
     $inputColor: black
     $maintextcolor: white
+    $disabled: #fc3a3a45
 
     section
         width: 100vw
@@ -181,6 +197,11 @@ export default {
         display: flex
         justify-content: center
         align-items: center
+        @include edgesnap
+            padding: 20px
+        @include tablet-phone
+            height: auto
+            padding: 10px
         .contact
             width: 1100px
             @include edgesnap
@@ -199,6 +220,8 @@ export default {
                     flex-direction: column
                 &__left
                     width: 48%
+                    @include tablet-phone
+                        width: 100%
                     .contact__body__left--details
                         input
                             color: $maintextcolor
@@ -217,6 +240,9 @@ export default {
                             text-align: center
                 &__right
                     width: 48%
+                    overflow: hidden
+                    @include tablet-phone
+                        width: 100%
                     textarea
                         border: none
                         background: $inputback
@@ -229,8 +255,15 @@ export default {
                     .tag
                         min-height: 62px
                         flex-wrap: wrap
+                        span
+                            height: 100%
                         &__bubbles
                             height: 75%
+                    .tag-in-enter-active
+                        animation: tag-in 1.5s forwards
+                    .tag-in-leave-active
+                        animation: tag-out 2s forwards
+
                 .flex__col
                     display: flex
                     flex-direction: column
@@ -252,10 +285,13 @@ export default {
                     .contact__body__right--ul
                         border-bottom: 2px solid white
                         display: inline-block
-                        min-width: 70px
+                        min-width: 50px
             .tag
                 display: flex
                 flex-wrap: wrap
+                span
+                    display: flex
+                    flex-wrap: wrap 
                 input
                     background: none
                     border-bottom: 2px solid white
@@ -280,8 +316,31 @@ export default {
                     border-radius: 15px
                     padding: .5em 1em
                     border: 2px solid $maintextcolor
+                    transition: .8s 
+                    &:disabled
+                        background: $disabled
+                        box-shadow: 0px 0px 5px 0px $disabled
+                        animation: disabled 3s infinite
                 #contact__send--message
                     visibility: hidden
+    @keyframes tag-in 
+        0%    
+            transform: translatex(-300%)
+        100%  
+            transform: translatex(0%)
+    @keyframes tag-out 
+        0%    
+            transform: translatex(0%)
+        100%  
+            transform: translatex(-500%)
+    @keyframes disabled 
+        0%    
+            opacity: 1
+        50%  
+            opacity: .4
+        100%
+            opacity: 1
+
 </style>
 
 
