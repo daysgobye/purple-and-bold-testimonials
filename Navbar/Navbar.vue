@@ -1,9 +1,7 @@
 <template>
-    <div>
+    <div :class="{fixed: fixedNavclass }">
     <!--ADD IN BOTTOM BOX SHADOW ON NAV WHEN MOBILE IS EXPANDED-->
-    <fixed-header :fixed.sync="isFixed" :threshold="windowOffset">
-    <div :class="{ 'is-fixed': isFixed }">
-    <nav class="navbar" v-in-viewport :class="{ expanded: mobileNavExpanded }">
+    <nav class="navbar" ref="navbar" :class="{ expanded: mobileNavExpanded, fixed: fixedNavclass }">
       <div class="navbar__content">
         <div class="navbar__content__brand">
           <h2>
@@ -38,8 +36,6 @@
     </nav>
     <app-mobile-nav :navItems="this.navItems" :mobileNavExpanded="this.mobileNavExpanded"></app-mobile-nav>
 </div>
-</fixed-header>
-</div>
 
       <!-- //- nav.mobilenav
       //-   .mobilenav__container 
@@ -55,15 +51,10 @@
 <script>
 //subcategory LI are not getting a class may fix underline issue
 import MobileNav from "./MobileNav.vue";
-import FixedHeader from "vue-fixed-header";
 
-// import Vue from "vue";
-// import inViewportDirective from "vue-in-viewport-directive";
-// Vue.directive("in-viewport", inViewportDirective);
 export default {
   components: {
-    appMobileNav: MobileNav,
-    FixedHeader
+    appMobileNav: MobileNav
   },
   data() {
     return {
@@ -174,7 +165,8 @@ export default {
           url: "#"
         }
       ],
-      windowOffset: null
+      windowOffset: null,
+      fixedNavclass: false
     };
   },
   methods: {
@@ -202,7 +194,21 @@ export default {
     },
     handleResize() {
       this.windowOffset = window.innerHeight;
+    },
+    fixedNav() {
+      console.log(this.topOfNav);
     }
+  },
+  mounted() {
+    const topOfNavb = this.$refs.navbar.offsetTop;
+    window.addEventListener("scroll", e => {
+      if (window.scrollY >= topOfNavb) {
+        console.log("bingo");
+        this.fixedNavclass = true;
+      } else {
+        this.fixedNavclass = false;
+      }
+    });
   },
   created() {
     window.addEventListener("resize", this.handleResize);
@@ -227,9 +233,20 @@ export default {
 
 //scoped variables 
 $nav-height: 60px
-.is-fixed
+.fixed
   position: fixed
-  z-index: 100000
+  width: 100%
+  display: flex
+  z-index: 999
+.fixed.navbar
+  position: fixed
+  z-index: 999
+  background: white
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75)
+  &__content
+    z-index: 999
+    &__desktopnav
+      z-index: 999
 .navbar
   display: flex
   position: relative
