@@ -107,7 +107,7 @@ export default {
 
       tags: ["Website", "Branding", "Marketing"],
 
-      customTag: " "
+      customTag: ""
     };
   },
   mounted() {
@@ -121,6 +121,7 @@ export default {
     // this is called when you enter a custom tag and it will add it to the message
     addCustomTag() {
       this.messageData.pickedTags.push(this.customTag);
+      this.customTag = "";
     },
     removeTag(i) {
       this.messageData.pickedTags.splice(i, 1);
