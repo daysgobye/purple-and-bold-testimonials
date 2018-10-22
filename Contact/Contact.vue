@@ -1,8 +1,9 @@
 <template>
+<!-- Cole's newest -->
 <section id="contact">
     <div class="contact">
         <div class="Contact__title">
-            <h2>Contact Us</h2>
+            <h2 class="section--header">Contact Us</h2>
         </div>
         <div class="contact__body">
             <div class="flex__col contact__body__left">
@@ -28,12 +29,12 @@
                        <div class="tag__bubbles" v-for="(tag, index) in tags" :key="index" @click="addTag(index)">
                             <p>{{ tag.toLowerCase() }}</p>
                         </div>
-                        <input type="text" placeholder="Enter Your Own" @submit="addCustomTag" v-model="customTag"> 
+                        <input type="text" placeholder="Enter Your Own" @keyup.enter="addCustomTag" v-model="customTag"> 
                         <button @click="addCustomTag">+</button>
                     </div>
                     <h4>Budget</h4>
                     <div>
-                       <p>${{ messageData.price[0] }}  - ${{ messageData.price[1] }} </p> 
+                       <p>${{ messageData.price[0] | comma }}  - ${{ messageData.price[1] | comma }} </p> 
                     </div>
                     
                     <vue-slider ref="slider" v-bind="vueSliderOptions"  v-model="messageData.price"></vue-slider>
@@ -43,14 +44,14 @@
                 <div class="flex__col contact__body__right--compose">
                     <p>Hello. My name is <span class="contact__body__right--ul">{{ messageData.yourName }}</span>  from <span class="contact__body__right--ul">{{ messageData.company }}</span> and I need: </p>
                     <div class="tag">
-                        <transition-group name="tag-in">
+                        <transition-group name="tags">
                         <div class="tag__bubbles" v-for="(tag, index) in messageData.pickedTags" :key="index" >
                             <p>{{ tag.toLowerCase() }}  </p><button@click="removeTag(index)" class="tag__bubbles--del"><p>x</p></button>
                         </div>
                         </transition-group>
                     </div>
                     <p class="pb"> You can reach me by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span> or <br> at my email <span class="contact__body__right--ul">{{ messageData.email }}</span></p>
-                    <p class="pb">I am looking to spend between <span class="contact__body__right--ul"> ${{messageData.price[0]}} </span> and <span class="contact__body__right--ul"> ${{messageData.price[1]}} </span> .</p>
+                    <p class="pb">I am looking to spend between <span class="contact__body__right--ul"> ${{messageData.price[0] | comma}} </span> and <span class="contact__body__right--ul"> ${{messageData.price[1] | comma}} </span> .</p>
                 </div>
                 <div class="flex__col transback contact__body__right--missed">
                     <label for="missed">Did We Miss Anything?</label>
@@ -72,6 +73,7 @@
     
 </section>
 </template>
+
 <script>
 import vueSlider from "vue-slider-component";
 export default {
@@ -149,6 +151,13 @@ export default {
       }
     }
   },
+  filters: {
+    comma: function(value) {
+      if (!value) return "";
+
+      return value.toLocaleString();
+    }
+  },
 
   watch: {
     //these watchers watch for a changes on the input fields and call the funcion to push it to the real text field
@@ -182,7 +191,8 @@ export default {
 <style lang="sass" scoped>
 @import '../../normalize.scss'
 @import '../../base.sass'
-$gradient: linear-gradient(to right bottom, #eaa26e, #ff9e89, #ff9eab, #ffa4d1, #fab1f5);
+$gradient: linear-gradient(165deg, #F7BA60 0%,#ff6797 65%)
+//linear-gradient(to right bottom, #eaa26e, #ff9e89, #ff9eab, #ffa4d1, #fab1f5);
 $inputback: #f7f3f3
 $cardback: rgba(255, 255, 255, .4)
 $inputColor: black
@@ -207,9 +217,9 @@ section
         width: 1100px
         @include edgesnap
             width: 100%
-        h2
-            padding-bottom: 50px
-            font-size: 2em
+        h2.section--header 
+            color: white
+            padding-bottom: 10px
         input:focus 
             outline: none
             box-shadow: 0px 0px 7px 1px rgba(250,177,245,1);//rgba(234,162,110,1);
@@ -226,6 +236,16 @@ section
                 width: 48%
                 @include tablet-phone
                     width: 100%
+                .tag 
+                    div:nth-child(1)
+                        margin-left: 0px
+                    .tag__bubbles
+                        //this is the left tags
+                        transition: all 1s ease-in-out
+                        
+                h4 
+                    font-weight: $light
+                    margin-top: 20px
                 .contact__body__left--details
                     input
                         color: $maintextcolor
@@ -246,6 +266,9 @@ section
                     p
                         text-align: center
             &__right
+                dipslay: flex 
+                flex-direction: column 
+                justify-content: space-between
                 width: 48%
                 overflow: hidden
                 @include tablet-phone
@@ -255,7 +278,7 @@ section
                 textarea
                     border: none
                     background: $inputback
-                    margin-top: 7px 
+                    margin-top: 29px 
                     color: $inputColor
                     resize: none
                     padding: 2px
@@ -269,10 +292,12 @@ section
                         height: 100%
                     &__bubbles
                         height: 75%
-                .tag-in-enter-active
+                .tags-enter-active
                     animation: tag-in 1.5s forwards
-                .tag-in-leave-active
+                .tags-leave-active
                     animation: tag-out 2s forwards
+                .tags-move
+                    transition: all 2s
 
             .flex__col
                 display: flex
@@ -291,12 +316,15 @@ section
                 font-size: 1.1rem
                 padding: 6px
             .contact__body__right--compose
-                font-size: 1.2rem
+                font-size: 1.63rem
                 .contact__body__right--ul
                     border-bottom: 2px solid white
                     display: inline-block
                     min-width: 50px
                 .tag
+                    //inline block on this sort of looks cool actually
+                    // display: inline-block
+                    display: flex
                     .tag__bubbles 
                         display: flex
                         border-radius: 100px
@@ -339,37 +367,76 @@ section
             justify-content: flex-end
             align-self: flex-end
             input
-                margin-top: 20px
-                font-size: 1.4em
-                border-radius: 5px
-                padding: .5em 1em
-                border: 2px solid $maintextcolor
-                transition: .8s 
+                // margin-top: 20px
+                // font-size: 1.4em
+                // border-radius: 5px
+                // padding: .5em 1em
+                // border: 2px solid $maintextcolor
+                // transition: .8s 
+                // margin-bottom: 50px
+                display: flex 
+                flex-direction: column 
+                justify-content: center
+                align-items: center
+                color: $maintextcolor
+                height: 45px
+                width: 160px
+                border: .08em solid $maintextcolor
+                border-radius: 3px
+                font-size: .9em
+                letter-spacing: .05em
+                font-weight: $light
+                margin-bottom: 40px
+                transition: all 0.3s ease-in-out
+                &:hover 
+                    transform: scale(1.03) translateY(-3px)
                 &:disabled
                     background: $disabled
                     box-shadow: 0px 0px 5px 0px $disabled
                     animation: disabled 3s infinite
+                    &:hover 
+                        transform: scale(1) translateY(0px)
             #contact__send--message
                 visibility: hidden
 
 
 @keyframes tag-in 
     0%    
-        transform: translatex(-300%)
+        // transform: translatex(-300%)
+        opacity: 0
     100%  
-        transform: translatex(0%)
+        // transform: translatex(0%)
+        opacity: 1
 @keyframes tag-out 
     0%    
-        transform: translatex(0%)
+        // transform: translatex(0%)
+        opacity: 1
     100%  
-        transform: translatex(-500%)
+        // transform: translatex(-500%)
+        opacity: 0
 @keyframes disabled 
     0%    
         opacity: 1
     50%  
         opacity: .4
     100%
-        opacity: 1
+        opacity: 1 
+
+
+
+
+.tags-enter, 
+  opacity: 1
+  //transform: translateY(300px)
+
+.tags-leave-to
+  opacity: 0
+
+.tags-leave-active 
+  //position: absolute
+  opacity: 0
+  //transform: translateX(-1800px) scale(0.3)
+  //right: 0
 
 </style>
 

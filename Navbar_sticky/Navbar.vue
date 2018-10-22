@@ -1,19 +1,18 @@
 <template>
-    <div>
+    <div :class="{fixed: fixedNavclass }">
     <!--ADD IN BOTTOM BOX SHADOW ON NAV WHEN MOBILE IS EXPANDED-->
-    <nav class="navbar" :class="{ expanded: mobileNavExpanded }">
+    <nav class="navbar" ref="navbar" :class="{ expanded: mobileNavExpanded, fixed: fixedNavclass }">
       <div class="navbar__content">
         <div class="navbar__content__brand">
-          <img src="../../assets/images/brand.svg" alt="Purple and Bold Logo">
-          <!-- <h2>
+          <h2>
             <span class="purple">Purple</span>
             <span class="bold">+ Bold</span>
-          </h2> -->
+          </h2>
         </div>
           <div class="navbar__content__desktopnav">
             <ul class="main__nav">
               <li class="main__nav__item" v-for="(navitem, index) in navItems"@mouseenter="setFocus" @mouseleave="setFocus" > 
-                <a :href=" navitem.url " v-smooth-scroll="{ duration: 1000,}" >{{ navitem.name  }}</a>
+                <a :href=" navitem.url ">{{ navitem.name  }}</a>
                   <!-- <template v-if="navitem.hasOwnProperty('subCategories')">
                   <div class="navbar__content__desktopnav__subcategory">
                     <ul class="desktopnav__sub__menu"> 
@@ -37,6 +36,7 @@
     </nav>
     <app-mobile-nav :navItems="this.navItems" :mobileNavExpanded="this.mobileNavExpanded"></app-mobile-nav>
 </div>
+
       <!-- //- nav.mobilenav
       //-   .mobilenav__container 
       //-      ul(
@@ -58,6 +58,7 @@ export default {
   },
   data() {
     return {
+      isFixed: false,
       mobileNavExpanded: false,
       focus: false,
       navItems: [
@@ -161,9 +162,11 @@ export default {
         },
         {
           name: "Contact",
-          url: "#contact"
+          url: "#"
         }
-      ]
+      ],
+      windowOffset: null,
+      fixedNavclass: false
     };
   },
   methods: {
@@ -188,7 +191,28 @@ export default {
     },
     removeSubMenu() {
       console.log("lext the LI");
+    },
+    handleResize() {
+      this.windowOffset = window.innerHeight;
+    },
+    fixedNav() {
+      console.log(this.topOfNav);
     }
+  },
+  mounted() {
+    const topOfNavb = this.$refs.navbar.offsetTop;
+    window.addEventListener("scroll", e => {
+      if (window.scrollY >= topOfNavb) {
+        console.log("bingo");
+        this.fixedNavclass = true;
+      } else {
+        this.fixedNavclass = false;
+      }
+    });
+  },
+  created() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
   }
 };
 
@@ -209,7 +233,20 @@ export default {
 
 //scoped variables 
 $nav-height: 60px
-
+.fixed
+  position: fixed
+  width: 100%
+  display: flex
+  z-index: 999
+.fixed.navbar
+  position: fixed
+  z-index: 999
+  background: white
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75)
+  &__content
+    z-index: 999
+    &__desktopnav
+      z-index: 999
 .navbar
   display: flex
   position: relative
@@ -217,7 +254,6 @@ $nav-height: 60px
   align-items: center
   height: $nav-height
   z-index: 999
-  scroll-snap-align: start
   @include tablet-portrait 
     height: 50px
   &.expanded
@@ -232,7 +268,6 @@ $nav-height: 60px
       width: 100%
       padding: 0px 10px
     &__brand
-      display: flex
       font-family: 'Rubik', 'Avenir', sans-serif
       color: $blue-grey
       h2
