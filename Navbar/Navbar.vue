@@ -1,7 +1,8 @@
-<template>
-    <div>
+<template> 
+<!-- <div :class="{ fixedhelp: fixedNavClass }"> -->
+    <div :class="{ fixed: fixedNavClass }">
     <!--ADD IN BOTTOM BOX SHADOW ON NAV WHEN MOBILE IS EXPANDED-->
-    <nav class="navbar" :class="{ expanded: mobileNavExpanded }">
+    <nav class="navbar" ref="navbar" :class="{ expanded: mobileNavExpanded, fixed: fixedNavClass }">
       <div class="navbar__content">
         <div class="navbar__content__brand">
           <img src="../../assets/images/brand.svg" alt="Purple and Bold Logo">
@@ -12,8 +13,8 @@
         </div>
           <div class="navbar__content__desktopnav">
             <ul class="main__nav">
-              <li class="main__nav__item" v-for="(navitem, index) in navItems"@mouseenter="setFocus" @mouseleave="setFocus" > 
-                <a :href=" navitem.url " v-smooth-scroll="{ duration: 1000,}" >{{ navitem.name  }}</a>
+              <li class="main__nav__item" v-for="(navitem, index) in navItems"> 
+                <a :href=" navitem.url " v-smooth-scroll="{ duration: 1000, offset: -50}" >{{ navitem.name  }}</a>
                   <!-- <template v-if="navitem.hasOwnProperty('subCategories')">
                   <div class="navbar__content__desktopnav__subcategory">
                     <ul class="desktopnav__sub__menu"> 
@@ -27,7 +28,7 @@
               </ul>
           </div>
           <div class="navbar__content__mobilenav">
-            <button class="navbar__content__mobilenav__hamburger" @click="mobileNavExpanded = !mobileNavExpanded">
+            <button class="navbar__content__mobilenav__hamburger" @click="[mobileNavExpanded = !mobileNavExpanded, expandMobileNav = !expandMobileNav]">
               <span class="navbar__content__mobilenav__hamburger__line1"></span>
               <span class="navbar__content__mobilenav__hamburger__line2"></span>
               <span class="navbar__content__mobilenav__hamburger__line3"></span>
@@ -35,7 +36,8 @@
           </div>
       </div>
     </nav>
-    <app-mobile-nav :navItems="this.navItems" :mobileNavExpanded="this.mobileNavExpanded"></app-mobile-nav>
+    <app-mobile-nav :navItems="this.navItems" :expandMobileNav="this.expandMobileNav" :mobileNavExpanded="this.mobileNavExpanded"></app-mobile-nav>
+</div> 
 </div>
       <!-- //- nav.mobilenav
       //-   .mobilenav__container 
@@ -60,14 +62,17 @@ export default {
     return {
       mobileNavExpanded: false,
       focus: false,
+      fixedNavClass: false,
+      expandMobileNav: false,
+      topOfNav: null,
       navItems: [
         {
           name: "About",
-          url: "#"
+          url: "#about"
         },
         {
           name: "Services",
-          url: "#",
+          url: "#services",
           subCategories: [
             {
               name: "Web Development",
@@ -157,7 +162,7 @@ export default {
         },
         {
           name: "Portfolio",
-          url: "#"
+          url: "#portfolio"
         },
         {
           name: "Contact",
@@ -167,28 +172,81 @@ export default {
     };
   },
   methods: {
-    setFocus(event) {
-      console.log(event);
-      this.focus = !this.focus;
-      const el = event.target;
-      const popoutMenu = el.childNodes[1];
-      console.log(this.focus);
-      // if (this.focus) {
-      //   // popoutMenu.style.opacity = "1";
-      //   // popoutMenu.style.visibility = "visible";
-      //   popoutMenu.classList.add("submenu-expanded");
-      // } else {
-      //   // popoutMenu.style.opacity = "0";
-      //   // popoutMenu.style.visibility = "hidden";
-      //   popoutMenu.classList.remove("submenu-expanded");
-      // }
-    },
+    // setFocus(event) {
+    //   console.log(event);
+    //   this.focus = !this.focus;
+    //   const el = event.target;
+    //   const popoutMenu = el.childNodes[1];
+    //   console.log(this.focus);
+    //   if (this.focus) {
+    //     // popoutMenu.style.opacity = "1";
+    //     // popoutMenu.style.visibility = "visible";
+    //     popoutMenu.classList.add("submenu-expanded");
+    //   } else {
+    //     // popoutMenu.style.opacity = "0";
+    //     // popoutMenu.style.visibility = "hidden";
+    //     popoutMenu.classList.remove("submenu-expanded");
+    //   }
+    // },
     expandSubMenu() {
       console.log(event.target);
     },
     removeSubMenu() {
       console.log("lext the LI");
+    },
+    handleResize() {
+      this.windowOffset = window.innerHeight;
+    },
+    fixedNav() {
+      // check if the scroll of the page is past where the nav is and if it is then add a class to the nav wraper to make it fixed
+      if (window.scrollY >= this.topOfNav) {
+        this.fixedNavClass = true;
+      } else {
+        this.fixedNavClass = false;
+      }
+    },
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    debounce(func, wait, immediate) {
+      var timeout;
+      return function executedFunction() {
+        var context = this;
+        var args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
     }
+  },
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+    // find the top of the nav bar on the page
+    const topOfNavb = this.$refs.navbar.offsetTop;
+    this.topOfNav = topOfNavb;
+    this.handleResize();
+    // fire above medthod when scroll
+    window.onscroll = () => {
+      if (!this.fixedNavClass) {
+        this.fixedNav();
+      } else {
+        // this.debounce(this.fixedNav(), 250);
+      }
+    };
+
+    // window.addEventListener("scroll", e => {
+    //   if (window.scrollY >= topOfNavb) {
+    //     this.fixedNavClass = true;
+    //   } else {
+    //     this.fixedNavClass = false;
+    //   }
+    // });
   }
 };
 
@@ -209,7 +267,39 @@ export default {
 
 //scoped variables 
 $nav-height: 60px
+// .fixedhelp
+//   height: 60px !important
+// .fixed
+//   position: fixed
+//   width: 100%
+//   display: flex
+//   z-index: 999
+//   top: 0px
+// .fixed.navbar
+//   position: fixed
+//   z-index: 999
+//   background: white
+//   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75)
+//   &__content
+//     z-index: 999
+//     &__desktopnav
+//       z-index: 999
 
+.fixed
+  position: sticky
+  top: 0px 
+  width: 100%
+  display: flex
+  z-index: 999
+  top: 0px 
+  .fixed.navbar
+    z-index: 999
+    background: white
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75)
+    &__content
+      z-index: 999
+      &__desktopnav
+        z-index: 999
 .navbar
   display: flex
   position: relative
@@ -217,7 +307,6 @@ $nav-height: 60px
   align-items: center
   height: $nav-height
   z-index: 999
-  scroll-snap-align: start
   @include tablet-portrait 
     height: 50px
   &.expanded
