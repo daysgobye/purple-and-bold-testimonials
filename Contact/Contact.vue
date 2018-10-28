@@ -1,5 +1,4 @@
 <template>
-<!-- Cole's newest -->
 <section id="contact">
     <div class="contact">
         <div class="Contact__title">
@@ -46,7 +45,7 @@
                     <div class="tag">
                         <transition-group name="tags">
                         <div class="tag__bubbles" v-for="(tag, index) in messageData.pickedTags" :key="index" >
-                            <p>{{ tag.toLowerCase() }}  </p><button@click="removeTag(index)" class="tag__bubbles--del"><p>x</p></button>
+                            <p>{{ tag.toLowerCase() }}  </p><button @click="removeTag(index)" class="tag__bubbles--del"><p>x</p></button>
                         </div>
                         </transition-group>
                     </div>
@@ -104,9 +103,7 @@ export default {
           background: "#f7f3f3"
         }
       },
-
       tags: ["Website", "Branding", "Marketing"],
-
       customTag: ""
     };
   },
@@ -155,11 +152,9 @@ export default {
   filters: {
     comma: function(value) {
       if (!value) return "";
-
       return value.toLocaleString();
     }
   },
-
   watch: {
     //these watchers watch for a changes on the input fields and call the funcion to push it to the real text field
     "messageData.yourName": function() {
@@ -193,13 +188,11 @@ export default {
 @import '../../normalize.scss'
 @import '../../base.sass'
 $gradient: linear-gradient(165deg, #F7BA60 0%,#ff6797 65%)
-//linear-gradient(to right bottom, #eaa26e, #ff9e89, #ff9eab, #ffa4d1, #fab1f5);
 $inputback: #f7f3f3
 $cardback: rgba(255, 255, 255, .4)
 $inputColor: black
 $maintextcolor: white
 $disabled: #fc3a3a45
-
 section
     width: 100vw
     height: auto
@@ -299,7 +292,6 @@ section
                     animation: tag-out 2s forwards
                 .tags-move
                     transition: all 2s
-
             .flex__col
                 display: flex
                 flex-direction: column
@@ -329,18 +321,14 @@ section
                     .tag__bubbles 
                         display: flex
                         border-radius: 100px
-                        padding: 1px 5px
+                        // padding: 1px 5px 
+                        padding: 2px 2px
                         justify-content: space-between
                         align-items: center
                         p
-                            padding: 4px 15px
-                            font-size: 0.9em 
+                            padding: 2px 10px
+                            font-size: 0.9rem 
                             margin: 0px 0px
-                        .tag__bubbles--del
-                            
-                            p
-                                line-height: 10px
-
         .tag
             display: flex
             flex-wrap: wrap
@@ -357,10 +345,11 @@ section
                 margin: 5px
                 font-size: 0.9em
                 .tag__bubbles--del
-                    height: 1.5em
-                    width: 1.5em
+                    height: 1.5rem
+                    width: 1.5rem
                     display: flex
                     justify-content: center
+                    align-items: center
                     border: 1px solid white
                     border-radius: 100%
         &__send
@@ -368,13 +357,6 @@ section
             justify-content: flex-end
             align-self: flex-end
             input
-                // margin-top: 20px
-                // font-size: 1.4em
-                // border-radius: 5px
-                // padding: .5em 1em
-                // border: 2px solid $maintextcolor
-                // transition: .8s 
-                // margin-bottom: 50px
                 display: flex 
                 flex-direction: column 
                 justify-content: center
@@ -399,8 +381,6 @@ section
                         transform: scale(1) translateY(0px)
             #contact__send--message
                 visibility: hidden
-
-
 @keyframes tag-in 
     0%    
         // transform: translatex(-300%)
@@ -422,23 +402,14 @@ section
         opacity: .4
     100%
         opacity: 1 
-
-
-
-
 .tags-enter, 
   opacity: 1
   //transform: translateY(300px)
-
 .tags-leave-to
   opacity: 0
-
 .tags-leave-active 
   //position: absolute
   opacity: 0
   //transform: translateX(-1800px) scale(0.3)
   //right: 0
-
 </style>
-
-
