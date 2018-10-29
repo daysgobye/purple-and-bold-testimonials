@@ -78,7 +78,6 @@ export default {
   mounted() {
     this.toggleLoad();
     window.addEventListener("scroll", this.handleScroll);
-    window.addEventListener("touchmove", this.handleScroll);
     if (!this.scroll) {
     }
   }

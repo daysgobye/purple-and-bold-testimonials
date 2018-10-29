@@ -49,12 +49,12 @@
                         </div>
                         </transition-group>
                     </div>
-                    <p class="pb"> You can reach me by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span> or <br> at my email <span class="contact__body__right--ul">{{ messageData.email }}</span></p>
+                    <p class="pb"> You can reach me by phone at <span class="contact__body__right--ul"> {{messageData.telephone}} </span> or <span class="contact__body__right--span"><br></span>  at my email <span class="contact__body__right--ul">{{ messageData.email }}</span></p>
                     <p class="pb">I am looking to spend between <span class="contact__body__right--ul"> ${{messageData.price[0] | comma}} </span> and <span class="contact__body__right--ul"> ${{messageData.price[1] | comma}} </span> .</p>
                 </div>
                 <div class="flex__col transback contact__body__right--missed">
                     <label for="missed">Did We Miss Anything?</label>
-                    <textarea name="missed" v-model="messageData.missed" id="" cols="30" rows=5></textarea>
+                    <textarea name="missed" v-model="messageData.missed" id="" cols="30" rows=6></textarea>
                 </div>
             </div>
         </div> 
@@ -228,12 +228,14 @@ section
                     margin-bottom: 7px
             &__left
                 width: 48%
+                justify-content: space-between
                 @include tablet-phone
                     width: 100%
                 .tag 
                     div:nth-child(1)
                         margin-left: 0px
                     .tag__bubbles
+                        cursor: pointer
                         //this is the left tags
                         transition: all 1s ease-in-out
                         
@@ -272,10 +274,10 @@ section
                 textarea
                     border: none
                     background: $inputback
-                    margin-top: 29px 
+                    margin-top: 8px 
                     color: $inputColor
                     resize: none
-                    padding: 2px
+                    padding: 4px
                     &:focus 
                         outline: none
                         box-shadow: 0px 0px 7px 1px rgba(250,177,245,1);//rgba(234,162,110,1);
@@ -286,6 +288,7 @@ section
                         height: 100%
                     &__bubbles
                         height: 75%
+                        cursor: pointer
                 .tags-enter-active
                     animation: tag-in 1.5s forwards
                 .tags-leave-active
@@ -314,11 +317,15 @@ section
                     border-bottom: 2px solid white
                     display: inline-block
                     min-width: 50px
+                .contact__body__right--span
+                    @include tablet-phone
+                        display: none
                 .tag
                     //inline block on this sort of looks cool actually
                     // display: inline-block
                     display: flex
                     .tag__bubbles 
+                        cursor: pointer
                         display: flex
                         border-radius: 100px
                         // padding: 1px 5px 
@@ -337,14 +344,18 @@ section
                 flex-wrap: wrap 
             input
                 background: none
-                border-bottom: 2px solid white
+                border-bottom: 2px solid white 
+                &::placeholder
+                    color: $maintextcolor
             &__bubbles
+                cursor: bubbles
                 background: $cardback
                 border-radius: 15px
                 padding: 4px 15px
                 margin: 5px
                 font-size: 0.9em
                 .tag__bubbles--del
+                    cursor: pointer
                     height: 1.5rem
                     width: 1.5rem
                     display: flex
@@ -371,6 +382,14 @@ section
                 font-weight: $light
                 margin-bottom: 40px
                 transition: all 0.3s ease-in-out
+                @include tablet-portrait
+                    font-size: .85em
+                    height: 36px 
+                    width: 145px
+                @include phone-large 
+                    margin-bottom: 30px
+                @include phone-small 
+                    margin-bottom: 20px
                 &:hover 
                     transform: scale(1.03) translateY(-3px)
                 &:disabled
